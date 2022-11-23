@@ -1,0 +1,332 @@
+
+package bank;
+
+import java.util.Scanner;
+import java.text.DecimalFormat;
+
+
+public class Bank {
+
+    //LIBRARY
+    public static Scanner scan = new Scanner(System.in);
+    public static DecimalFormat formatter = new DecimalFormat("#,###.00");
+    
+    //VARIABLES
+    ////ACCOUNT DATABASE
+    public static String[] idDatabase = {"101", "102", "103", "104", "105", "106", "107", "108", "109", "110"};
+    public static String[] nameDatabase = {"JOHN", "SARA", "STEPHEN", "THOMAS", "ROBERT", "TIMOTHY", "ALBERT", "LISA", "TIPHANY", "DAVID"};
+    public static String[] passDatabase = {"0911", "0428", "0210", "7010", "1225", "0101", "1131", "0214", "0621", "0512"};
+    public static float[] balDatabase = {5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000};
+    
+    ////ACCESS STATUS
+    public static boolean userIsTrue = false;
+    public static boolean passIsTrue = false;
+    public static boolean access;
+    
+    ////TRANSACTION
+    public static int accountNum;
+    public static int userTransaction;
+    public static float withdrawVal;
+    
+    public static void accessStatus(){
+        
+        //RESET 
+        userIsTrue = false;
+        passIsTrue = false;
+        access = false;
+        String userID, userPass;
+        
+        System.out.println("=====================================\n"
+                         + "============PLEASE LOG IN============\n"
+                         + "=====================================");
+        
+        do{
+            System.out.print("ID CODE  : ");
+            userID = scan.nextLine();
+
+            System.out.print("PASSCODE : ");
+            userPass = scan.nextLine();
+
+            for(int i = 0; i < idDatabase.length; i++){
+                if(userID.equals(idDatabase[i]) && userPass.equals(passDatabase[i])){
+                    accountNum = i;
+                    userIsTrue = true;
+                    passIsTrue = true;
+                    break;
+                }else if(userID.equals(idDatabase[i]) && !userPass.equals(passDatabase[i])){
+                    userIsTrue = true;
+                    break;
+                }else if(!userID.equals(idDatabase[i]) && userPass.equals(passDatabase[i])){
+                    passIsTrue = true;
+                }
+            }
+
+            if(userIsTrue && passIsTrue){
+                System.out.println("=====================================\n"
+                                 + "Welcome " + nameDatabase[accountNum] + " to the AET Bank!");
+                access = true;
+            } else if(!userIsTrue && passIsTrue){
+                System.out.println("=====================================\n"
+                                 + "----Username/ Password mismatch!-----\n"
+                                 + "=====================================");
+            } else if(userIsTrue && !passIsTrue){
+                System.out.println("=====================================\n"
+                                 + "----Username/ Password mismatch!-----\n"
+                                 + "=====================================");
+            } else if(!userIsTrue && !passIsTrue) {
+                System.out.println("=====================================\n"
+                                 + "--Username/ Password NOT REGISTERD!--\n"
+                                 + "=====================================");
+            }
+            
+        }while(!access);
+        
+        mainMenu();
+            
+    }
+    
+    public static void main(String[] args) {
+        
+        accessStatus();
+       
+    }
+    
+    public static void mainMenu(){
+            System.out.println("=====================================\n"
+                             + "         [1] Deposit               \n"
+                             + "         [2] Withdraw              \n"
+                             + "         [3] Transfer Funds        \n"
+                             + "         [4] Balance Inquiry       \n"
+                             + "         [5] Log Out               \n"
+                             + "=====================================");
+            do{
+                try{
+                    Scanner input = new Scanner(System.in);
+                    System.out.print("Please enter your TRANSACTION: ");
+                    userTransaction = scan.nextInt();
+                    break;
+                }catch(Exception error) {
+                    scan.nextLine();
+                    System.out.println("========NUMERIC VALUE ONLY!==========");
+            	}
+            }while(true);
+
+            switch(userTransaction){
+                case 1:
+                    exeDeposit();
+                case 2:
+                    exeWithdraw();
+                case 3:
+                    scan.nextLine();//THIS LINE WILL FIX A JAVA BUG
+                    exeTransfer();
+                case 4: 
+                    exeBal();
+                case 5:
+                    System.out.println("=====================================\n"
+                                     + "------LOGGED OUT SUCCESSFULLY!-------\n"
+                                     + "=====================================");
+                    scan.nextLine();//THIS LINE WILL FIX A JAVA BUG
+                    accessStatus();
+            }
+    }
+    
+    public static void exeDeposit(){
+        
+        int ans = 0;
+        
+        int depositVal;
+        
+            do{
+                try{
+                    Scanner input = new Scanner(System.in);
+                    System.out.print("=====================================\n"
+                                   + "Enter the ammount to DEPOSIT : ");
+                    depositVal = input.nextInt();
+                    
+                    break;
+                }catch(Exception error) {
+                    System.out.println("========NUMERIC VALUE ONLY!==========");
+            	}
+            }while(true);
+        
+        balDatabase[accountNum] += depositVal;
+        
+        System.out.println("=====================================\n"
+                         + "CURRENT BALANCE: " + formatter.format(balDatabase[accountNum]) +"\n"
+                         + "=====================================");
+        
+        //BACK TO MENU?
+        do{
+            try{
+                Scanner input = new Scanner(System.in);
+                System.out.print("CONTINUE? '1' = YES, '2' = NO: ");
+                ans = scan.nextInt();
+                break;
+            }catch(Exception error) {
+                scan.nextLine(); //COVERS ENDLESS LOOP
+                System.out.println("========NUMERIC VALUE ONLY!==========");
+            }
+        }while(true);
+        
+        switch (ans) {
+            case 1:
+                exeDeposit();
+            case 2:
+                mainMenu();
+        }
+    }
+    
+    public static void exeWithdraw(){
+        
+        int ans = 0;
+        
+        do{
+            do{
+                try{
+                    Scanner input = new Scanner(System.in);
+                    System.out.print("=====================================\n"
+                                   + "Enter the ammount to WITHDRAW: ");
+                    withdrawVal = scan.nextInt();
+                    break;
+                }catch(Exception error) {
+                    scan.nextLine();
+                    System.out.println("========NUMERIC VALUE ONLY!==========");
+            	}
+            }while(true);
+            
+            if(withdrawVal > balDatabase[accountNum]){
+                System.out.println("Entered ammount EXCEEDES current balance."
+                                 + "Please re-enter withdraw ammount!");
+            }
+        }while(withdrawVal > balDatabase[accountNum]);
+        
+        balDatabase[accountNum] -= withdrawVal;
+        
+        System.out.println("-------------------------------------\n"
+                         + "CURRENT BALANCE: " + formatter.format(balDatabase[accountNum]) +"\n"
+                         + "=====================================");
+        
+        //BACK TO MENU?
+        do{
+            try{
+                Scanner input = new Scanner(System.in);
+                System.out.print("CONTINUE? '1' = YES, '2' = NO: ");
+                ans = scan.nextInt();
+                break;
+            }catch(Exception error) {
+                scan.nextLine(); //COVERS ENDLESS LOOP
+                System.out.println("========NUMERIC VALUE ONLY!==========");
+            }
+        }while(true);
+        
+        switch (ans) {
+            case 1:
+                exeWithdraw();
+            case 2:
+                mainMenu();
+        }
+    }
+    
+    public static void exeTransfer(){
+        
+        String transRecepient;
+        int transVal;
+        int recepientIndex = 0;
+        boolean recepientIsTrue = false;
+        int ans = 0;
+                
+        do{
+            System.out.print("=====================================\n"
+                           + "RECEPIENT ID CODE: ");
+            transRecepient = scan.nextLine();
+
+            for(int i = 0; i < idDatabase.length; i++){
+                    if(transRecepient.equals(idDatabase[i])){
+                        recepientIndex = i;
+                        recepientIsTrue = true;
+                        break;
+                    }else if(i == idDatabase.length){
+                        break;
+                    }
+                }
+        }while(!recepientIsTrue);
+        
+        do{
+            do{
+                try{
+                    Scanner input = new Scanner(System.in);
+                    System.out.print("Enter TRANSFER AMMOUNT : ");
+                    transVal = scan.nextInt();
+                    break;
+                }catch(Exception error) {
+                    scan.nextLine(); //COVERS ENDLESS LOOP
+                    System.out.println("========NUMERIC VALUE ONLY!==========");
+            	}
+            }while(true);
+            
+            if(transVal > balDatabase[accountNum]){
+                System.out.println("=====================================\n"
+                                 + "--Ammount EXCEEDES current balance.--\n"
+                                 + "--Please RE-ENTER withdraw ammount!--\n"
+                                 + "=====================================");
+            }
+        }while(transVal > balDatabase[accountNum]);
+        
+        balDatabase[recepientIndex] += transVal;
+        balDatabase[accountNum] -= transVal;
+        
+        System.out.println("=====================================\n"
+                         + transVal + " SUCCESSFULLY TRANFERED to " + transRecepient + "\n"
+                         + "=====================================");
+        
+        //BACK TO MENU?
+        do{
+            try{
+                Scanner input = new Scanner(System.in);
+                System.out.print("CONTINUE? '1' = YES, '2' = NO: ");
+                ans = scan.nextInt();
+                break;
+            }catch(Exception error) {
+                scan.nextLine(); //COVERS ENDLESS LOOP
+                System.out.println("========NUMERIC VALUE ONLY!==========");
+            }
+        }while(true);
+        
+        switch (ans) {
+            case 1:
+                scan.nextLine(); //THIS LINE WILL FIX A JAVA BUG
+                exeTransfer();
+            case 2:
+                mainMenu();
+        }
+    }
+    
+    public static void exeBal(){
+        
+        int ans = 0;
+        
+        System.out.println("=====================================\n"
+                         + "CURRENT BALANCE: " + formatter.format(balDatabase[accountNum]) + "\n"
+                         + "=====================================");
+        do{
+            try{
+                Scanner input = new Scanner(System.in);
+                System.out.print("CONTINUE? '1' = YES, '2' = NO: ");
+                ans = scan.nextInt();
+                break;
+            }catch(Exception error) {
+                scan.nextLine(); //COVERS ENDLESS LOOP
+                System.out.println("========NUMERIC VALUE ONLY!==========");
+            }
+        }while(true);
+        
+        switch (ans) {
+            case 1:
+                scan.nextLine(); //THIS LINE WILL FIX A JAVA BUG
+                exeTransfer();
+            case 2:
+                mainMenu();
+        }
+    }
+    
+}
