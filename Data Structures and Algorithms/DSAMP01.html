@@ -1,0 +1,37 @@
+<script>
+  ans = null;
+  document.write(" < h1 > Arithmetic Operation < /h1>");
+      firstNum = parseInt(window.prompt("Enter 1st Number:", "")); secondNum = parseInt(window.prompt("Enter 2nd Number:", "")); op = window.prompt("Select Operation: \n[A]dd [S]ubtract [M]ultiply [D]ivide").toUpperCase();
+      //INTERPRET OPERATION AND CALCULATE ANSWER
+      switch (op) {
+        case 'A':
+          ans = firstNum + secondNum;
+          op = "Addition";
+          break;
+        case 'S':
+          ans = firstNum - secondNum;
+          op = "Subtraction";
+          break;
+        case 'M':
+          ans = firstNum * secondNum;
+          op = "Multiplication";
+          break;
+        case 'D':
+          ans = firstNum / secondNum;
+          op = "Division";
+          break;
+        default:
+          break;
+      }
+      //CHECK IF ALL INPUT IS VALID
+      if (!isNaN(firstNum) && !isNaN(secondNum) && ans != null) {
+        document.write(" < p > 1 st Number: " + firstNum + " < /p>");
+            document.write(" < p > 2n d Number: " + secondNum + " < /p>");
+              document.write(" < p > Operation: " + op + " < /p>")
+                document.write(" < p > The answer is: " + ans + " < /p>");
+                }
+                else {
+                  window.alert("Invalid Entry!");
+                  document.write(" < p > < b > Operation Cancelled... < /b> < /p>");
+                  }
+</script>
